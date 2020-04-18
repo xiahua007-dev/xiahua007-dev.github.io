@@ -1,5 +1,5 @@
 # Site settings
-title: XIAHUA007 Blog
+title: xiahua007 Blog
 SEOTitle: 虾华的博客 | xiahua007 blog
 header-img: img/post-bg-desk.jpg
 email: xiahua007@qq.com
@@ -11,7 +11,7 @@ github_repo: "https://github.com/qiubaiying/qiubaiying.github.io.git" # you code
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: "人没有牺牲就什么都得不到，为了得到什么东西，就需要付出同等的代价;这就是炼金术“等价交换”的原理;那时的我们，相信那就是世界的真实"
+sidebar-about-description: "人没有牺牲就什么都得不到，为了得到什么东西，就需要付出同等的代价"
 sidebar-avatar: /img/xiahua.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
