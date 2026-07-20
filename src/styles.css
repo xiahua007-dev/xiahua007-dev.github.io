@@ -1,0 +1,245 @@
+/*
+ * Assumptions for the first deploy:
+ * 1. The priority is a reliable GitHub Pages launch, not final personal branding.
+ * 2. Name and copy are placeholders that can be replaced in src/main.jsx.
+ * 3. No remote images or fonts are used, so the page remains fast and dependable.
+ */
+
+:root {
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  color: #1c1b19;
+  background: #f2efe7;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(28, 27, 25, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28, 27, 25, 0.035) 1px, transparent 1px),
+    #f2efe7;
+  background-size: 32px 32px;
+}
+
+a {
+  color: inherit;
+}
+
+.page-shell {
+  width: min(100% - 48px, 1440px);
+  min-height: 100vh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav {
+  min-height: 92px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #1c1b19;
+}
+
+.wordmark {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.wordmark span,
+h1 em {
+  color: #e34a28;
+}
+
+.nav-link,
+.primary-link {
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero {
+  flex: 1;
+  min-height: 620px;
+  padding: clamp(70px, 11vh, 150px) 0 64px;
+  display: grid;
+  align-content: space-between;
+}
+
+.eyebrow {
+  margin: 0 0 30px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+h1 {
+  max-width: 1200px;
+  margin: 0;
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: clamp(50px, 8.1vw, 124px);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+h1 em {
+  font-style: italic;
+}
+
+.hero-footer {
+  margin-top: 80px;
+  display: grid;
+  grid-template-columns: minmax(260px, 540px) auto;
+  align-items: end;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.intro {
+  margin: 0;
+  max-width: 520px;
+  font-size: clamp(17px, 1.6vw, 22px);
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+.primary-link {
+  min-width: 210px;
+  padding: 17px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #1c1b19;
+  border-bottom: 1px solid #1c1b19;
+  transition: color 180ms ease, padding 180ms ease;
+}
+
+.primary-link:hover {
+  color: #e34a28;
+  padding-left: 8px;
+}
+
+.status {
+  padding: 26px 0;
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  align-items: center;
+  gap: 24px;
+  border-top: 1px solid #1c1b19;
+  border-bottom: 1px solid #1c1b19;
+}
+
+.status > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status p,
+.status strong,
+.status-index,
+footer p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.status strong {
+  font-weight: 500;
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #e34a28;
+  box-shadow: 0 0 0 4px rgba(227, 74, 40, 0.14);
+}
+
+.status-index {
+  font-family: Consolas, monospace;
+  color: #6d685f;
+}
+
+footer {
+  padding: 24px 0 32px;
+  display: flex;
+  justify-content: space-between;
+  color: #6d685f;
+}
+
+@media (max-width: 720px) {
+  .page-shell {
+    width: min(100% - 32px, 1440px);
+  }
+
+  .nav {
+    min-height: 76px;
+  }
+
+  .hero {
+    min-height: auto;
+    padding: 74px 0 52px;
+  }
+
+  h1 {
+    font-size: clamp(46px, 14vw, 78px);
+    line-height: 1.02;
+  }
+
+  .hero-footer {
+    margin-top: 64px;
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .primary-link {
+    width: 100%;
+  }
+
+  .status {
+    grid-template-columns: 1fr auto;
+  }
+
+  .status strong {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  footer {
+    gap: 18px;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  * {
+    transition: none !important;
+  }
+}
