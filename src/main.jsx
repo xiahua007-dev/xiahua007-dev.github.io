@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom/client'
-import { about, focusAreas, profile, projects, thoughts } from './siteData'
+import ReactMarkdown from 'react-markdown'
+import { articles, getArticleBySlug } from './articles'
+import { about, focusAreas, profile, projects } from './siteData'
 import './styles.css'
 
 function TiltedCard() {
@@ -105,22 +107,25 @@ function ProjectList() {
 
 function ThoughtList() {
   return (
-    <section className="frame section-block thoughts-band reveal" id="thoughts" aria-labelledby="thoughts-title">
+    <section className="frame section-block thoughts-band reveal" id="writing" aria-labelledby="writing-title">
       <SectionHeader
         eyebrow="WRITING"
-        title="工作思考"
-        description="这里先放文章主题和写作方向。等你开始写正文时，可以升级成 Markdown 或 MDX 文章系统。"
+        title="工作思考与文章"
+        description="文章已经从页面数据升级为 Markdown 文件。现在可以先沉淀主题，后续直接在 Markdown 里继续写正文。"
       />
       <div className="thought-grid">
-        {thoughts.map((thought) => (
-          <article className="thought-item" key={thought.title}>
+        {articles.map((article) => (
+          <article className="thought-item" key={article.slug}>
             <div className="thought-topline">
-              <span>{thought.category}</span>
-              <time>{thought.date}</time>
+              <span>{article.category}</span>
+              <time>{article.date}</time>
             </div>
-            <h3>{thought.title}</h3>
-            <p>{thought.summary}</p>
-            <strong>{thought.status}</strong>
+            <h3>{article.title}</h3>
+            <p>{article.summary}</p>
+            <a className="article-link" href={`#writing/${article.slug}`}>
+              {article.status}
+              <span aria-hidden="true">→</span>
+            </a>
           </article>
         ))}
       </div>
@@ -131,11 +136,7 @@ function ThoughtList() {
 function About() {
   return (
     <section className="frame section-block about-section reveal" id="about" aria-labelledby="about-title">
-      <SectionHeader
-        eyebrow="ABOUT"
-        title="关于我"
-        description={about.summary}
-      />
+      <SectionHeader eyebrow="ABOUT" title="关于我" description={about.summary} />
       <div className="about-layout">
         <div className="principles">
           {about.principles.map((item, index) => (
@@ -158,14 +159,70 @@ function About() {
   )
 }
 
+function ArticlePage({ article }) {
+  if (!article) {
+    return (
+      <main className="page-shell article-shell">
+        <a className="wordmark" href="#top" aria-label="返回首页">
+          XH<span>.</span>
+        </a>
+        <section className="frame article-page">
+          <span className="section-label">WRITING</span>
+          <h1>文章不存在</h1>
+          <p>这个链接没有匹配到当前的 Markdown 文章。</p>
+          <a className="primary-link" href="#writing">
+            返回文章列表
+            <span aria-hidden="true">→</span>
+          </a>
+        </section>
+      </main>
+    )
+  }
+
+  return (
+    <main className="page-shell article-shell">
+      <nav className="nav article-nav" aria-label="文章导航">
+        <a className="wordmark" href="#top" aria-label="返回首页">
+          XH<span>.</span>
+        </a>
+        <a className="back-link" href="#writing">返回文章列表</a>
+      </nav>
+
+      <article className="frame article-page">
+        <div className="article-kicker">
+          <span>{article.category}</span>
+          <time>{article.date}</time>
+        </div>
+        <h1>{article.title}</h1>
+        <p className="article-summary">{article.summary}</p>
+        <div className="article-content">
+          <ReactMarkdown>{article.content}</ReactMarkdown>
+        </div>
+      </article>
+    </main>
+  )
+}
+
 function App() {
+  const [activeSlug, setActiveSlug] = React.useState(() => window.location.hash.replace(/^#writing\/?/, ''))
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash
+      setActiveSlug(hash.startsWith('#writing/') ? hash.replace(/^#writing\/?/, '') : '')
+    }
+
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
+
   useEffect(() => {
     const revealNodes = document.querySelectorAll('.reveal')
     document.documentElement.classList.add('js-ready')
 
     if (!('IntersectionObserver' in window)) {
       revealNodes.forEach((node) => node.classList.add('is-visible'))
-      return
+      return undefined
     }
 
     const observer = new IntersectionObserver((entries) => {
@@ -180,7 +237,11 @@ function App() {
     revealNodes.forEach((node) => observer.observe(node))
 
     return () => observer.disconnect()
-  }, [])
+  }, [activeSlug])
+
+  if (activeSlug) {
+    return <ArticlePage article={getArticleBySlug(activeSlug)} />
+  }
 
   return (
     <main className="page-shell">
@@ -190,7 +251,7 @@ function App() {
         </a>
         <div className="nav-links">
           <a href="#projects">项目</a>
-          <a href="#thoughts">思考</a>
+          <a href="#writing">文章</a>
           <a href="#about">关于</a>
           <a href={profile.github} target="_blank" rel="noreferrer">GitHub ↗</a>
         </div>
@@ -252,5 +313,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <App />
   </React.StrictMode>,
 )
-
-

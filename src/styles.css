@@ -148,6 +148,8 @@ h1 em {
 .nav-links a,
 .primary-link,
 .project-side a,
+.article-link,
+.back-link,
 .contact-list a {
   text-decoration: none;
 }
@@ -155,6 +157,8 @@ h1 em {
 .nav-links a:hover,
 .nav-links a:focus-visible,
 .project-side a:hover,
+.article-link:hover,
+.back-link:hover,
 .contact-list a:hover {
   color: var(--color-primary);
 }
@@ -313,8 +317,7 @@ footer p {
   height: 100%;
   display: block;
   object-fit: cover;
-  filter: sepia(0.3) saturate(0.68) contrast(1.08);
-  mix-blend-mode: multiply;
+  filter: none;
   transform: translateZ(34px) scale(1.04);
   transition: transform 520ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 520ms ease;
 }
@@ -568,9 +571,105 @@ footer p {
   margin-bottom: 28px;
 }
 
-.thought-item strong {
+.article-link {
   margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   color: var(--color-primary);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.article-shell {
+  max-width: 880px;
+}
+
+.article-nav {
+  margin-bottom: 24px;
+}
+
+.back-link {
+  color: var(--color-primary);
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.article-page {
+  padding: calc(10.5px + 42px);
+}
+
+.article-page h1 {
+  max-width: 760px;
+  margin: 18px 0;
+  font-size: clamp(2.2rem, 7vw, 4rem);
+}
+
+.article-kicker {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  color: var(--color-primary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.article-summary {
+  max-width: 680px;
+  margin-bottom: 34px;
+  font-size: 1.06rem;
+}
+
+.article-content {
+  max-width: 720px;
+  padding-top: 28px;
+  border-top: 1px solid var(--color-border);
+}
+
+.article-content h2 {
+  margin-top: 34px;
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+}
+
+.article-content h2:first-child {
+  margin-top: 0;
+}
+
+.article-content h3 {
+  margin-top: 28px;
+}
+
+.article-content p,
+.article-content li,
+.article-content blockquote {
+  color: var(--color-muted);
+  font-size: 1.02rem;
+}
+
+.article-content ul {
+  margin: 0 0 24px;
+  padding-left: 1.3em;
+}
+
+.article-content li {
+  margin-bottom: 8px;
+}
+
+.article-content blockquote {
+  margin: 26px 0;
+  padding: 12px 0 12px 20px;
+  border-left: 3px solid var(--color-primary);
+  background: rgba(139, 26, 26, 0.06);
+}
+
+.article-content code {
+  padding: 1px 5px;
+  background: rgba(139, 26, 26, 0.08);
+  color: var(--color-primary);
+  font-family: Consolas, 'Liberation Mono', monospace;
   font-size: 0.88rem;
 }
 
@@ -691,6 +790,10 @@ footer {
     padding: calc(10.5px + 16px);
   }
 
+  .article-page {
+    padding: calc(10.5px + 22px);
+  }
+
   .hero {
     padding-top: calc(10.5px + 24px);
   }
@@ -784,5 +887,6 @@ footer {
     transform: none !important;
   }
 }
+
 
 

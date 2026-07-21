@@ -45,29 +45,6 @@ export const projects = [
   },
 ]
 
-export const thoughts = [
-  {
-    title: '怎样把个人主页变成长期资产',
-    category: '建站记录',
-    summary: '从 GitHub Pages、域名、HTTPS 到内容结构，记录这个主页从 0 到 1 的搭建过程。',
-    date: '2026-07',
-    status: '计划写作',
-  },
-  {
-    title: '读开源项目时，我会先看什么',
-    category: '开源学习',
-    summary: '不从源码细节开始，而是先看项目边界、模块结构、发布方式和工程决策。',
-    date: 'Soon',
-    status: '草稿主题',
-  },
-  {
-    title: '工程实践里的稳定性和效率取舍',
-    category: '工作思考',
-    summary: '把工作中遇到的判断沉淀成可复用的经验，而不是只保留零散结论。',
-    date: 'Soon',
-    status: '草稿主题',
-  },
-]
 
 export const about = {
   summary: '这个主页会优先服务三个目标：让别人快速知道我在关注什么、让我能持续展示项目进展、把工作中的技术判断沉淀下来。',
