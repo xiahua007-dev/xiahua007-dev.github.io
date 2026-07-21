@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom/client'
 import { about, focusAreas, profile, projects, thoughts } from './siteData'
 import './styles.css'
@@ -66,7 +66,7 @@ function TiltedCard() {
 function SectionHeader({ eyebrow, title, description }) {
   return (
     <div className="section-header">
-      <p className="eyebrow">{eyebrow}</p>
+      <span className="section-label">{eyebrow}</span>
       <h2>{title}</h2>
       <p>{description}</p>
     </div>
@@ -75,7 +75,7 @@ function SectionHeader({ eyebrow, title, description }) {
 
 function ProjectList() {
   return (
-    <section className="section-block" id="projects" aria-labelledby="projects-title">
+    <section className="frame section-block reveal" id="projects" aria-labelledby="projects-title">
       <SectionHeader
         eyebrow="OPEN SOURCE"
         title="开源项目与关注"
@@ -105,7 +105,7 @@ function ProjectList() {
 
 function ThoughtList() {
   return (
-    <section className="section-block thoughts-band" id="thoughts" aria-labelledby="thoughts-title">
+    <section className="frame section-block thoughts-band reveal" id="thoughts" aria-labelledby="thoughts-title">
       <SectionHeader
         eyebrow="WRITING"
         title="工作思考"
@@ -130,7 +130,7 @@ function ThoughtList() {
 
 function About() {
   return (
-    <section className="section-block about-section" id="about" aria-labelledby="about-title">
+    <section className="frame section-block about-section reveal" id="about" aria-labelledby="about-title">
       <SectionHeader
         eyebrow="ABOUT"
         title="关于我"
@@ -159,6 +159,29 @@ function About() {
 }
 
 function App() {
+  useEffect(() => {
+    const revealNodes = document.querySelectorAll('.reveal')
+    document.documentElement.classList.add('js-ready')
+
+    if (!('IntersectionObserver' in window)) {
+      revealNodes.forEach((node) => node.classList.add('is-visible'))
+      return
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible')
+          observer.unobserve(entry.target)
+        }
+      })
+    }, { threshold: 0.15 })
+
+    revealNodes.forEach((node) => observer.observe(node))
+
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <main className="page-shell">
       <nav className="nav" aria-label="主导航">
@@ -173,8 +196,8 @@ function App() {
         </div>
       </nav>
 
-      <section className="hero" id="top">
-        <p className="eyebrow">PERSONAL HOMEPAGE / 2026</p>
+      <section className="frame hero reveal" id="top">
+        <p className="hero-slogan">PERSONAL HOMEPAGE / 2026</p>
         <div className="hero-main">
           <div>
             <h1>
@@ -199,7 +222,11 @@ function App() {
         </div>
       </section>
 
-      <section className="status" aria-label="当前状态">
+      <div className="quote-divider reveal" aria-hidden="true">
+        <span>真实项目 · 长期写作 · 持续迭代</span>
+      </div>
+
+      <section className="frame status reveal" aria-label="当前状态">
         <div>
           <span className="status-dot" aria-hidden="true" />
           <p>当前状态</p>
@@ -225,3 +252,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <App />
   </React.StrictMode>,
 )
+
+

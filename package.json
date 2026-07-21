@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "publish:github": "powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -File scripts/publish.ps1"
   },
   "dependencies": {
     "react": "^18.3.1",
