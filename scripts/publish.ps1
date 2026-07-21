@@ -40,7 +40,7 @@ if (-not $status) {
 Invoke-Checked { git status --short } "Cannot print git status"
 
 Step "Committing changes"
-Invoke-Checked { git add index.html package.json package-lock.json public src scripts .github README.md } "git add failed"
+Invoke-Checked { git add AGENTS.md index.html package.json package-lock.json public src scripts .github README.md } "git add failed"
 
 $staged = git diff --cached --name-only
 if ($LASTEXITCODE -ne 0) {
@@ -58,3 +58,4 @@ Step "Pushing to origin/$branch"
 Invoke-Checked { git push origin $branch } "git push failed"
 
 Write-Host "Published. GitHub Pages deployment will run from GitHub Actions." -ForegroundColor Green
+
