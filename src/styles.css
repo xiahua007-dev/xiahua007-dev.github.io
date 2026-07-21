@@ -2,13 +2,17 @@
  * Assumptions for the first deploy:
  * 1. The priority is a reliable GitHub Pages launch, not final personal branding.
  * 2. Name and copy are placeholders that can be replaced in src/main.jsx.
- * 3. No remote images or fonts are used, so the page remains fast and dependable.
+ * 3. The only remote asset is the public GitHub avatar used for the interactive portrait.
  */
 
 :root {
   font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
   color: #1c1b19;
   background: #f2efe7;
+  --ink: #1c1b19;
+  --paper: #f2efe7;
+  --muted: #6d685f;
+  --accent: #e34a28;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
@@ -101,12 +105,141 @@ h1 {
   font-size: clamp(50px, 8.1vw, 124px);
   font-weight: 400;
   line-height: 0.98;
-  letter-spacing: -0.055em;
+  letter-spacing: 0;
   text-wrap: balance;
 }
 
 h1 em {
   font-style: italic;
+}
+
+.hero-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(230px, 22vw, 330px);
+  align-items: center;
+  gap: clamp(30px, 5vw, 86px);
+}
+
+.portrait-stage {
+  position: relative;
+  justify-self: end;
+  width: min(100%, 330px);
+  padding: 22px 0 0 22px;
+  perspective: 1000px;
+}
+
+.portrait-stage::before {
+  content: '';
+  position: absolute;
+  inset: 0 22px 22px 0;
+  border: 1px solid var(--ink);
+  transform: translate(-10px, -10px);
+}
+
+.portrait-hint,
+.portrait-number {
+  margin: 0;
+  font-family: Consolas, monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.portrait-hint {
+  position: absolute;
+  top: 0;
+  left: 22px;
+}
+
+.portrait-number {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  writing-mode: vertical-rl;
+}
+
+.tilted-card-link {
+  position: relative;
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  transform-style: preserve-3d;
+}
+
+.tilted-card {
+  --glare-x: 50%;
+  --glare-y: 50%;
+  position: relative;
+  z-index: 1;
+  aspect-ratio: 4 / 5;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--ink);
+  background: #141311;
+  box-shadow: 18px 18px 0 rgba(28, 27, 25, 0.12);
+  transform: perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1);
+  transform-style: preserve-3d;
+  transition: transform 520ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 520ms ease;
+  will-change: transform;
+}
+
+.tilted-card.is-active {
+  box-shadow: 24px 26px 0 rgba(28, 27, 25, 0.16);
+}
+
+.tilted-card img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  filter: saturate(0.92) contrast(1.06);
+  transform: translateZ(34px) scale(1.04);
+  transition: transform 520ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 520ms ease;
+}
+
+.tilted-card.is-active img {
+  filter: saturate(1.02) contrast(1.1);
+  transform: translateZ(44px) scale(1.08);
+}
+
+.card-glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at var(--glare-x) var(--glare-y), rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.06) 24%, transparent 50%),
+    linear-gradient(135deg, rgba(227, 74, 40, 0.2), transparent 38%, rgba(242, 239, 231, 0.18));
+  mix-blend-mode: screen;
+  opacity: 0.42;
+  transition: opacity 260ms ease;
+}
+
+.tilted-card.is-active .card-glare {
+  opacity: 0.74;
+}
+
+.tilted-card figcaption {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  left: 16px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  color: #f8f3ea;
+  text-shadow: 0 1px 18px rgba(0, 0, 0, 0.42);
+  transform: translateZ(58px);
+}
+
+.tilted-card figcaption span,
+.tilted-card figcaption strong {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.tilted-card figcaption strong {
+  white-space: nowrap;
 }
 
 .hero-footer {
@@ -201,7 +334,17 @@ footer {
 
   .hero {
     min-height: auto;
-    padding: 74px 0 52px;
+    padding: 54px 0 52px;
+  }
+
+  .hero-main {
+    grid-template-columns: 1fr;
+  }
+
+  .portrait-stage {
+    justify-self: start;
+    width: min(78vw, 300px);
+    order: -1;
   }
 
   h1 {
