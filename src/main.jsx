@@ -20,16 +20,16 @@ function TiltedCard() {
     const card = cardRef.current
     if (!card) return
 
-    const bounds = card.getBoundingClientRect()
-    const x = (event.clientX - bounds.left) / bounds.width
-    const y = (event.clientY - bounds.top) / bounds.height
-    const rotateX = (0.5 - y) * 16
-    const rotateY = (x - 0.5) * 16
+    const bounds = event.currentTarget.getBoundingClientRect()
+    const x = Math.min(Math.max((event.clientX - bounds.left) / bounds.width, 0), 1)
+    const y = Math.min(Math.max((event.clientY - bounds.top) / bounds.height, 0), 1)
+    const rotateX = (0.5 - y) * 14
+    const rotateY = (x - 0.5) * 14
 
     card.classList.add('is-active')
     card.style.setProperty('--glare-x', `${x * 100}%`)
     card.style.setProperty('--glare-y', `${y * 100}%`)
-    card.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.035, 1.035, 1.035)`
+    card.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.028, 1.028, 1.028)`
   }
 
   const resetCard = () => {
@@ -51,14 +51,11 @@ function TiltedCard() {
         target="_blank"
         rel="noreferrer"
         aria-label="查看 Xiahua 的 GitHub 主页"
+        onPointerMove={handlePointerMove}
+        onPointerLeave={resetCard}
+        onBlur={resetCard}
       >
-        <figure
-          ref={cardRef}
-          className="tilted-card"
-          onPointerMove={handlePointerMove}
-          onPointerLeave={resetCard}
-          onBlur={resetCard}
-        >
+        <figure ref={cardRef} className="tilted-card">
           <img src={profile.avatar} alt="Xiahua 的 GitHub 头像" />
           <span className="card-glare" aria-hidden="true" />
           <figcaption>
