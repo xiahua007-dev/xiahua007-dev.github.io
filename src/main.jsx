@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react'
 import ReactDOM from 'react-dom/client'
 import Fuse from 'fuse.js'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { articles, getArticleBySlug } from './articles'
 import { about, focusAreas, profile, projects } from './siteData'
 import './styles.css'
@@ -246,6 +247,185 @@ function WritingListPage() {
   )
 }
 
+function cleanHeadingText(text) {
+  return text
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/[*_~#]/g, '')
+    .trim()
+}
+
+function getArticleOutline(content) {
+  const headings = []
+  const headingPattern = /^(#{2,4})\s+(.+)$/gm
+  let match
+
+  while ((match = headingPattern.exec(content)) !== null) {
+    headings.push({
+      id: `section-${headings.length + 1}`,
+      level: match[1].length,
+      text: cleanHeadingText(match[2]),
+    })
+  }
+
+  return headings
+}
+
+function getOutlineTree(headings) {
+  const tree = []
+  const stack = [{ level: 1, children: tree }]
+
+  headings.forEach((heading) => {
+    const node = { ...heading, children: [] }
+
+    while (stack.length > 0 && stack[stack.length - 1].level >= heading.level) {
+      stack.pop()
+    }
+
+    stack[stack.length - 1].children.push(node)
+    stack.push(node)
+  })
+
+  return tree
+}
+
+function ArticleOutline({ article, headings }) {
+  const [collapsedItems, setCollapsedItems] = React.useState(() => new Set())
+
+  if (headings.length === 0) return null
+
+  const tree = getOutlineTree(headings)
+  const hasCollapsibleItems = headings.some((heading) => heading.level < 4)
+
+  const handleOutlineClick = (event, id) => {
+    event.preventDefault()
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const toggleItem = (id) => {
+    setCollapsedItems((current) => {
+      const next = new Set(current)
+
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+
+      return next
+    })
+  }
+
+  const collapseAll = () => {
+    setCollapsedItems(new Set(headings.filter((heading) => heading.level < 4).map((heading) => heading.id)))
+  }
+
+  const expandAll = () => {
+    setCollapsedItems(new Set())
+  }
+
+  const renderNode = (node) => {
+    const isCollapsed = collapsedItems.has(node.id)
+    const hasChildren = node.children.length > 0
+
+    return (
+      <li className={`outline-depth-${node.level}`} key={node.id}>
+        <div className="outline-row">
+          {hasChildren ? (
+            <button
+              type="button"
+              className="outline-toggle"
+              aria-label={`${isCollapsed ? '展开' : '收起'} ${node.text}`}
+              aria-expanded={!isCollapsed}
+              onClick={() => toggleItem(node.id)}
+            >
+              {isCollapsed ? '+' : '-'}
+            </button>
+          ) : (
+            <span className="outline-toggle-placeholder" aria-hidden="true" />
+          )}
+          <a href={`#writing/${article.slug}`} onClick={(event) => handleOutlineClick(event, node.id)}>
+            {node.text}
+          </a>
+        </div>
+        {hasChildren && !isCollapsed ? <ol>{node.children.map(renderNode)}</ol> : null}
+      </li>
+    )
+  }
+
+  return (
+    <aside className="article-outline" aria-label="文章大纲">
+      <div className="outline-head">
+        <span className="outline-label">OUTLINE</span>
+        {hasCollapsibleItems ? (
+          <div className="outline-actions" aria-label="大纲层级控制">
+            <button type="button" onClick={expandAll}>展开</button>
+            <button type="button" onClick={collapseAll}>收起</button>
+          </div>
+        ) : null}
+      </div>
+      <nav>
+        <ol>
+          {tree.map(renderNode)}
+        </ol>
+      </nav>
+    </aside>
+  )
+}
+
+function MermaidDiagram({ chart }) {
+  const [svg, setSvg] = React.useState('')
+  const [error, setError] = React.useState('')
+  const diagramId = React.useId().replace(/:/g, '')
+
+  useEffect(() => {
+    let isMounted = true
+
+    import('mermaid')
+      .then(({ default: mermaid }) => {
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: 'strict',
+          theme: 'base',
+          themeVariables: {
+            background: '#fff8ec',
+            primaryColor: '#f5efe6',
+            primaryBorderColor: '#8b1a1a',
+            primaryTextColor: '#2a1a0e',
+            lineColor: '#8b1a1a',
+            fontFamily: 'Noto Serif SC, Songti SC, SimSun, serif',
+          },
+        })
+
+        return mermaid.render(`article-mermaid-${diagramId}`, chart)
+      })
+      .then((result) => {
+        if (!isMounted) return
+        setSvg(result.svg)
+        setError('')
+      })
+      .catch((renderError) => {
+        if (!isMounted) return
+        setSvg('')
+        setError(renderError.message || 'Mermaid 渲染失败')
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [chart, diagramId])
+
+  if (error) {
+    return (
+      <pre>
+        <code>{chart}</code>
+      </pre>
+    )
+  }
+
+  return <div className="mermaid-diagram" dangerouslySetInnerHTML={{ __html: svg }} />
+}
+
 function ArticlePage({ article }) {
   if (!article) {
     return (
@@ -264,6 +444,42 @@ function ArticlePage({ article }) {
     )
   }
 
+  const outline = getArticleOutline(article.content)
+  let renderedHeadingIndex = 0
+  const markdownComponents = {
+    h2({ children }) {
+      renderedHeadingIndex += 1
+      return <h2 id={`section-${renderedHeadingIndex}`}>{children}</h2>
+    },
+    h3({ children }) {
+      renderedHeadingIndex += 1
+      return <h3 id={`section-${renderedHeadingIndex}`}>{children}</h3>
+    },
+    h4({ children }) {
+      renderedHeadingIndex += 1
+      return <h4 id={`section-${renderedHeadingIndex}`}>{children}</h4>
+    },
+    pre({ children }) {
+      const child = React.Children.only(children)
+
+      if (React.isValidElement(child) && child.props.className === 'language-mermaid') {
+        return child
+      }
+
+      return <pre>{children}</pre>
+    },
+    code({ className, children, ...props }) {
+      const language = /language-(\w+)/.exec(className || '')?.[1]
+      const code = String(children).replace(/\n$/, '')
+
+      if (language === 'mermaid') {
+        return <MermaidDiagram chart={code} />
+      }
+
+      return <code className={className} {...props}>{children}</code>
+    },
+  }
+
   return (
     <main className="page-shell article-shell">
       <nav className="nav article-nav" aria-label="文章导航">
@@ -273,17 +489,20 @@ function ArticlePage({ article }) {
         <a className="back-link" href="#writing">返回文章列表</a>
       </nav>
 
-      <article className="frame article-page">
-        <div className="article-kicker">
-          <span>{article.category}</span>
-          <time>{article.date}</time>
-        </div>
-        <h1>{article.title}</h1>
-        <p className="article-summary">{article.summary}</p>
-        <div className="article-content">
-          <ReactMarkdown>{article.content}</ReactMarkdown>
-        </div>
-      </article>
+      <div className="article-layout">
+        <ArticleOutline article={article} headings={outline} />
+        <article className="frame article-page">
+          <div className="article-kicker">
+            <span>{article.category}</span>
+            <time>{article.date}</time>
+          </div>
+          <h1>{article.title}</h1>
+          <p className="article-summary">{article.summary}</p>
+          <div className="article-content">
+            <ReactMarkdown components={markdownComponents} remarkPlugins={[remarkGfm]}>{article.content}</ReactMarkdown>
+          </div>
+        </article>
+      </div>
     </main>
   )
 }

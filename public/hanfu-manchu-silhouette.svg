@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">汉服与满服轮廓对比示意</title>
+  <desc id="desc">左侧是交领宽袖的汉服示意，右侧是立领盘扣和马蹄袖的满服示意。</desc>
+  <rect width="1200" height="680" fill="#fff8ec"/>
+  <path d="M52 52H1148V628H52Z" fill="none" stroke="#8b1a1a" stroke-width="6"/>
+  <path d="M84 84H1116V596H84Z" fill="none" stroke="#8b1a1a" stroke-width="2" opacity=".45"/>
+  <text x="220" y="116" fill="#8b1a1a" font-family="serif" font-size="46" font-weight="700">汉服轮廓</text>
+  <text x="800" y="116" fill="#8b1a1a" font-family="serif" font-size="46" font-weight="700">满服轮廓</text>
+  <line x1="600" y1="108" x2="600" y2="575" stroke="#8b1a1a" stroke-width="2" stroke-dasharray="10 12" opacity=".45"/>
+  <circle cx="300" cy="190" r="42" fill="#ead5bd" stroke="#8b1a1a" stroke-width="4"/>
+  <path d="M300 238L220 540H380Z" fill="#f1dfc7" stroke="#8b1a1a" stroke-width="5"/>
+  <path d="M300 246L247 364M300 246L357 365" stroke="#8b1a1a" stroke-width="5" fill="none"/>
+  <path d="M228 280C160 324 126 382 108 462C150 470 198 452 242 400" fill="#f1dfc7" stroke="#8b1a1a" stroke-width="5"/>
+  <path d="M372 280C440 324 474 382 492 462C450 470 402 452 358 400" fill="#f1dfc7" stroke="#8b1a1a" stroke-width="5"/>
+  <path d="M226 412H374" stroke="#8b1a1a" stroke-width="8"/>
+  <text x="172" y="588" fill="#6b5a4a" font-family="serif" font-size="28">交领 / 衣带 / 宽缓层叠</text>
+  <circle cx="900" cy="190" r="42" fill="#ead5bd" stroke="#8b1a1a" stroke-width="4"/>
+  <path d="M820 248H980L1012 540H788Z" fill="#efe1cf" stroke="#8b1a1a" stroke-width="5"/>
+  <path d="M860 244V318H940V244" fill="#fff8ec" stroke="#8b1a1a" stroke-width="5"/>
+  <path d="M874 312C910 330 930 366 944 424" stroke="#8b1a1a" stroke-width="5" fill="none"/>
+  <circle cx="910" cy="348" r="7" fill="#8b1a1a"/>
+  <circle cx="926" cy="388" r="7" fill="#8b1a1a"/>
+  <path d="M820 282C748 318 728 388 732 462C780 466 814 438 838 396" fill="#efe1cf" stroke="#8b1a1a" stroke-width="5"/>
+  <path d="M980 282C1052 318 1072 388 1068 462C1020 466 986 438 962 396" fill="#efe1cf" stroke="#8b1a1a" stroke-width="5"/>
+  <path d="M738 452C752 430 780 422 804 434" stroke="#8b1a1a" stroke-width="5" fill="none"/>
+  <path d="M1062 452C1048 430 1020 422 996 434" stroke="#8b1a1a" stroke-width="5" fill="none"/>
+  <path d="M900 540V438" stroke="#8b1a1a" stroke-width="3" stroke-dasharray="8 10"/>
+  <text x="752" y="588" fill="#6b5a4a" font-family="serif" font-size="28">立领 / 盘扣 / 袍服开衩</text>
+</svg>

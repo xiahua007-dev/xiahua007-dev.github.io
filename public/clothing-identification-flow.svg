@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">服饰判断流程图</title>
+  <desc id="desc">从领口、扣合、袖型、衣身和配饰五个步骤判断汉服与满服倾向。</desc>
+  <rect width="1200" height="760" fill="#fff8ec"/>
+  <path d="M54 54H1146V706H54Z" fill="none" stroke="#8b1a1a" stroke-width="6"/>
+  <text x="380" y="110" fill="#8b1a1a" font-family="serif" font-size="44" font-weight="700">服饰识别流程</text>
+  <g fill="#f5efe6" stroke="#8b1a1a" stroke-width="4">
+    <rect x="434" y="148" width="332" height="82"/>
+    <rect x="434" y="286" width="332" height="82"/>
+    <rect x="434" y="424" width="332" height="82"/>
+    <rect x="434" y="562" width="332" height="82"/>
+    <rect x="104" y="424" width="250" height="82"/>
+    <rect x="846" y="424" width="250" height="82"/>
+  </g>
+  <g fill="#8b1a1a" font-family="serif" font-size="28" font-weight="700" text-anchor="middle">
+    <text x="600" y="199">先看领口</text>
+    <text x="600" y="337">再看闭合方式</text>
+    <text x="600" y="475">检查袖型与开衩</text>
+    <text x="600" y="613">结合配饰与场景</text>
+    <text x="229" y="475">偏汉服线索</text>
+    <text x="971" y="475">偏满服线索</text>
+  </g>
+  <g stroke="#8b1a1a" stroke-width="4" fill="none" marker-end="url(#arrow)">
+    <path d="M600 230V286"/>
+    <path d="M600 368V424"/>
+    <path d="M548 506L330 562"/>
+    <path d="M652 506L870 562"/>
+    <path d="M354 465H434"/>
+    <path d="M766 465H846"/>
+    <path d="M600 506V562"/>
+  </g>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10Z" fill="#8b1a1a"/>
+    </marker>
+  </defs>
+  <g fill="#6b5a4a" font-family="serif" font-size="22" text-anchor="middle">
+    <text x="229" y="534">交领、衣带、层叠、宽缓</text>
+    <text x="971" y="534">立领、盘扣、马蹄袖、开衩</text>
+    <text x="600" y="672">不要只凭花纹判断；结构优先，语境其次。</text>
+  </g>
+</svg>
