@@ -1,4 +1,4 @@
-import matter from 'gray-matter'
+import frontMatter from 'front-matter'
 
 const articleModules = import.meta.glob('../content/writing/*.md', {
   eager: true,
@@ -12,12 +12,12 @@ function slugFromPath(path) {
 
 export const articles = Object.entries(articleModules)
   .map(([path, raw]) => {
-    const { data, content } = matter(raw)
+    const { attributes, body } = frontMatter(raw)
 
     return {
       slug: slugFromPath(path),
-      content: content.trim(),
-      ...data,
+      content: body.trim(),
+      ...attributes,
     }
   })
   .sort((a, b) => String(b.date).localeCompare(String(a.date)))

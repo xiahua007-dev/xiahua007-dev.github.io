@@ -10,7 +10,7 @@
     "publish:github": "powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -File scripts/publish.ps1"
   },
   "dependencies": {
-    "gray-matter": "^4.0.3",
+    "front-matter": "^4.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-markdown": "^10.1.0"
