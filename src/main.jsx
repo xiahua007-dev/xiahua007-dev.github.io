@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import ReactDOM from 'react-dom/client'
+import Fuse from 'fuse.js'
 import ReactMarkdown from 'react-markdown'
 import { articles, getArticleBySlug } from './articles'
 import { about, focusAreas, profile, projects } from './siteData'
@@ -105,31 +106,45 @@ function ProjectList() {
   )
 }
 
-function ThoughtList() {
+function ArticleCard({ article, variant = 'card' }) {
   return (
-    <section className="frame section-block thoughts-band reveal" id="writing" aria-labelledby="writing-title">
+    <a className={`thought-item ${variant === 'row' ? 'thought-item-row' : ''}`} href={`#writing/${article.slug}`}>
+      <article>
+        <div className="thought-topline">
+          <span>{article.category}</span>
+          <time>{article.date}</time>
+        </div>
+        <h3>{article.title}</h3>
+        <p>{article.summary}</p>
+        <strong className="article-link">
+          {article.status}
+          <span aria-hidden="true">→</span>
+        </strong>
+      </article>
+    </a>
+  )
+}
+
+function ThoughtPreview() {
+  const previewArticles = articles.slice(0, 3)
+
+  return (
+    <section className="frame section-block thoughts-band reveal" id="writing-preview" aria-labelledby="writing-title">
       <SectionHeader
         eyebrow="WRITING"
         title="工作思考与文章"
-        description="文章已经从页面数据升级为 Markdown 文件。现在可以先沉淀主题，后续直接在 Markdown 里继续写正文。"
+        description="文章已经从页面数据升级为 Markdown 文件。完整列表页支持按标题、分类、摘要和正文模糊搜索。"
       />
       <div className="thought-grid">
-        {articles.map((article) => (
-          <a className="thought-item" href={`#writing/${article.slug}`} key={article.slug}>
-            <article>
-              <div className="thought-topline">
-                <span>{article.category}</span>
-                <time>{article.date}</time>
-              </div>
-              <h3>{article.title}</h3>
-              <p>{article.summary}</p>
-              <strong className="article-link">
-                {article.status}
-                <span aria-hidden="true">→</span>
-              </strong>
-            </article>
-          </a>
+        {previewArticles.map((article) => (
+          <ArticleCard article={article} key={article.slug} />
         ))}
+      </div>
+      <div className="section-action">
+        <a className="primary-link" href="#writing">
+          查看全部文章
+          <span aria-hidden="true">→</span>
+        </a>
       </div>
     </section>
   )
@@ -161,13 +176,81 @@ function About() {
   )
 }
 
+function ShellNav({ current = 'home' }) {
+  return (
+    <nav className="nav" aria-label="主导航">
+      <a className="wordmark" href="#top" aria-label="返回首页">
+        XH<span>.</span>
+      </a>
+      <div className="nav-links">
+        <a href={current === 'home' ? '#projects' : '#top'}>{current === 'home' ? '项目' : '首页'}</a>
+        <a href="#writing">文章</a>
+        <a href={current === 'home' ? '#about' : '#top'}>关于</a>
+        <a href={profile.github} target="_blank" rel="noreferrer">GitHub ↗</a>
+      </div>
+    </nav>
+  )
+}
+
+function WritingListPage() {
+  const [query, setQuery] = React.useState('')
+  const fuse = useMemo(() => new Fuse(articles, {
+    keys: [
+      { name: 'title', weight: 0.4 },
+      { name: 'category', weight: 0.2 },
+      { name: 'summary', weight: 0.25 },
+      { name: 'content', weight: 0.15 },
+    ],
+    threshold: 0.36,
+    ignoreLocation: true,
+  }), [])
+  const normalizedQuery = query.trim()
+  const results = normalizedQuery ? fuse.search(normalizedQuery).map((result) => result.item) : articles
+
+  return (
+    <main className="page-shell writing-shell">
+      <ShellNav current="writing" />
+      <section className="frame article-index-page">
+        <div className="article-index-head">
+          <div>
+            <span className="section-label">WRITING</span>
+            <h1>工作思考与文章</h1>
+            <p>集中查看所有 Markdown 文章，也可以按标题、分类、摘要和正文模糊搜索。</p>
+          </div>
+          <div className="article-count" aria-label="文章数量">
+            <strong>{results.length}</strong>
+            <span>/ {articles.length}</span>
+          </div>
+        </div>
+
+        <label className="search-box">
+          <span>搜索文章</span>
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="输入关键词、分类或正文片段"
+            autoComplete="off"
+          />
+        </label>
+
+        <div className="article-index-list" aria-live="polite">
+          {results.length > 0 ? (
+            results.map((article) => <ArticleCard article={article} variant="row" key={article.slug} />)
+          ) : (
+            <p className="empty-state">没有找到匹配的文章。</p>
+          )}
+        </div>
+      </section>
+    </main>
+  )
+}
+
 function ArticlePage({ article }) {
   if (!article) {
     return (
       <main className="page-shell article-shell">
-        <a className="wordmark" href="#top" aria-label="返回首页">
-          XH<span>.</span>
-        </a>
+        <ShellNav current="writing" />
         <section className="frame article-page">
           <span className="section-label">WRITING</span>
           <h1>文章不存在</h1>
@@ -205,14 +288,25 @@ function ArticlePage({ article }) {
   )
 }
 
+function getRouteFromHash() {
+  const hash = window.location.hash
+
+  if (hash.startsWith('#writing/')) {
+    return { page: 'article', slug: hash.replace(/^#writing\/?/, '') }
+  }
+
+  if (hash === '#writing') {
+    return { page: 'writing-list', slug: '' }
+  }
+
+  return { page: 'home', slug: '' }
+}
+
 function App() {
-  const [activeSlug, setActiveSlug] = React.useState(() => window.location.hash.replace(/^#writing\/?/, ''))
+  const [route, setRoute] = React.useState(getRouteFromHash)
 
   useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash
-      setActiveSlug(hash.startsWith('#writing/') ? hash.replace(/^#writing\/?/, '') : '')
-    }
+    const handleHashChange = () => setRoute(getRouteFromHash())
 
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
@@ -239,25 +333,19 @@ function App() {
     revealNodes.forEach((node) => observer.observe(node))
 
     return () => observer.disconnect()
-  }, [activeSlug])
+  }, [route.page, route.slug])
 
-  if (activeSlug) {
-    return <ArticlePage article={getArticleBySlug(activeSlug)} />
+  if (route.page === 'article') {
+    return <ArticlePage article={getArticleBySlug(route.slug)} />
+  }
+
+  if (route.page === 'writing-list') {
+    return <WritingListPage />
   }
 
   return (
     <main className="page-shell">
-      <nav className="nav" aria-label="主导航">
-        <a className="wordmark" href="#top" aria-label="返回顶部">
-          XH<span>.</span>
-        </a>
-        <div className="nav-links">
-          <a href="#projects">项目</a>
-          <a href="#writing">文章</a>
-          <a href="#about">关于</a>
-          <a href={profile.github} target="_blank" rel="noreferrer">GitHub ↗</a>
-        </div>
-      </nav>
+      <ShellNav />
 
       <section className="frame hero reveal" id="top">
         <p className="hero-slogan">PERSONAL HOMEPAGE / 2026</p>
@@ -299,7 +387,7 @@ function App() {
       </section>
 
       <ProjectList />
-      <ThoughtList />
+      <ThoughtPreview />
       <About />
 
       <footer>
@@ -315,4 +403,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <App />
   </React.StrictMode>,
 )
-

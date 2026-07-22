@@ -902,3 +902,144 @@ footer {
 
 
 
+
+.section-action {
+  margin-top: 22px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.writing-shell,
+.article-shell {
+  max-width: 920px;
+}
+
+.article-index-page {
+  padding: calc(10.5px + 42px);
+}
+
+.article-index-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 28px;
+  margin-bottom: 28px;
+}
+
+.article-index-head h1 {
+  margin: 18px 0 16px;
+  font-size: clamp(2.4rem, 7vw, 4.2rem);
+}
+
+.article-index-head p {
+  max-width: 680px;
+  margin-bottom: 0;
+}
+
+.article-count {
+  min-width: 112px;
+  padding: 16px 18px;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  text-align: center;
+}
+
+.article-count strong {
+  display: block;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.article-count span {
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.search-box {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 26px;
+  color: var(--color-primary);
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.search-box input {
+  width: 100%;
+  min-height: 52px;
+  border: 2px solid var(--color-primary);
+  border-radius: 0;
+  padding: 12px 14px;
+  background: rgba(255, 252, 245, 0.78);
+  color: var(--color-text);
+  font: inherit;
+  letter-spacing: 0.02em;
+  outline-offset: 4px;
+}
+
+.search-box input::placeholder {
+  color: rgba(107, 90, 74, 0.72);
+}
+
+.article-index-list {
+  display: grid;
+  gap: 12px;
+}
+
+.thought-item-row {
+  min-height: 184px;
+}
+
+.thought-item-row article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: start;
+  column-gap: 28px;
+}
+
+.thought-item-row .thought-topline,
+.thought-item-row h3,
+.thought-item-row p {
+  grid-column: 1;
+}
+
+.thought-item-row .article-link {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: end;
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+.empty-state {
+  margin: 0;
+  padding: 26px 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+@media (max-width: 900px) {
+  .article-index-head,
+  .thought-item-row article {
+    grid-template-columns: 1fr;
+  }
+
+  .thought-item-row .article-link {
+    grid-column: 1;
+    grid-row: auto;
+    align-self: start;
+    margin-top: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .article-index-page {
+    padding: calc(10.5px + 22px);
+  }
+
+  .section-action .primary-link {
+    width: 100%;
+  }
+}
