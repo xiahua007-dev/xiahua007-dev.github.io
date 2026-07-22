@@ -115,18 +115,20 @@ function ThoughtList() {
       />
       <div className="thought-grid">
         {articles.map((article) => (
-          <article className="thought-item" key={article.slug}>
-            <div className="thought-topline">
-              <span>{article.category}</span>
-              <time>{article.date}</time>
-            </div>
-            <h3>{article.title}</h3>
-            <p>{article.summary}</p>
-            <a className="article-link" href={`#writing/${article.slug}`}>
-              {article.status}
-              <span aria-hidden="true">→</span>
-            </a>
-          </article>
+          <a className="thought-item" href={`#writing/${article.slug}`} key={article.slug}>
+            <article>
+              <div className="thought-topline">
+                <span>{article.category}</span>
+                <time>{article.date}</time>
+              </div>
+              <h3>{article.title}</h3>
+              <p>{article.summary}</p>
+              <strong className="article-link">
+                {article.status}
+                <span aria-hidden="true">→</span>
+              </strong>
+            </article>
+          </a>
         ))}
       </div>
     </section>
@@ -313,3 +315,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <App />
   </React.StrictMode>,
 )
+
