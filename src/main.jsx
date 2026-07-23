@@ -255,11 +255,35 @@ function cleanHeadingText(text) {
     .trim()
 }
 
+function getTextHash(text) {
+  let hash = 0
+
+  for (let index = 0; index < text.length; index += 1) {
+    hash = (hash * 31 + text.charCodeAt(index)) >>> 0
+  }
+
+  return hash.toString(36)
+}
+
+function getHeadingId(text, occurrence) {
+  return `article-heading-${getTextHash(text)}-${occurrence}`
+}
+
+function childrenToText(children) {
+  return React.Children.toArray(children)
+    .map((child) => {
+      if (typeof child === 'string' || typeof child === 'number') return String(child)
+      if (React.isValidElement(child)) return childrenToText(child.props.children)
+      return ''
+    })
+    .join('')
+}
+
 function getArticleOutline(content) {
   const headings = []
-  const headingPattern = /^(#{2,4})\s+(.+)$/gm
   let match
   let isInCodeBlock = false
+  const occurrences = new Map()
 
   content.split('\n').forEach((line) => {
     if (/^```/.test(line.trim())) {
@@ -272,10 +296,14 @@ function getArticleOutline(content) {
     match = /^(#{2,4})\s+(.+)$/.exec(line)
     if (!match) return
 
+    const text = cleanHeadingText(match[2])
+    const occurrence = (occurrences.get(text) || 0) + 1
+    occurrences.set(text, occurrence)
+
     headings.push({
-      id: `article-heading-${headings.length + 1}`,
+      id: getHeadingId(text, occurrence),
       level: match[1].length,
-      text: cleanHeadingText(match[2]),
+      text,
     })
   })
 
@@ -360,7 +388,7 @@ function ArticleOutline({ article, headings }) {
           ) : (
             <span className="outline-toggle-placeholder" aria-hidden="true" />
           )}
-          <a href={`#writing/${article.slug}`} onClick={(event) => handleOutlineClick(event, node.id)}>
+          <a href={`#${node.id}`} onClick={(event) => handleOutlineClick(event, node.id)}>
             {node.text}
           </a>
         </div>
@@ -461,22 +489,23 @@ function ArticlePage({ article }) {
   }
 
   const outline = getArticleOutline(article.content)
-  let renderedHeadingIndex = 0
-  const getRenderedHeadingId = (fallbackPrefix) => {
-    const heading = outline[renderedHeadingIndex]
-    renderedHeadingIndex += 1
+  const renderedHeadingOccurrences = new Map()
+  const getRenderedHeadingId = (children) => {
+    const text = cleanHeadingText(childrenToText(children))
+    const occurrence = (renderedHeadingOccurrences.get(text) || 0) + 1
+    renderedHeadingOccurrences.set(text, occurrence)
 
-    return heading?.id || `${fallbackPrefix}-${renderedHeadingIndex}`
+    return getHeadingId(text, occurrence)
   }
   const markdownComponents = {
     h2({ children }) {
-      return <h2 id={getRenderedHeadingId('article-heading')}>{children}</h2>
+      return <h2 id={getRenderedHeadingId(children)}>{children}</h2>
     },
     h3({ children }) {
-      return <h3 id={getRenderedHeadingId('article-heading')}>{children}</h3>
+      return <h3 id={getRenderedHeadingId(children)}>{children}</h3>
     },
     h4({ children }) {
-      return <h4 id={getRenderedHeadingId('article-heading')}>{children}</h4>
+      return <h4 id={getRenderedHeadingId(children)}>{children}</h4>
     },
     pre({ children }) {
       const child = React.Children.only(children)
