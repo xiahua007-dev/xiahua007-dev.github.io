@@ -4,6 +4,7 @@ category: "工作思考"
 date: "Soon"
 status: "草稿主题"
 summary: "把工作中遇到的判断沉淀成可复用的经验，而不是只保留零散结论。"
+draft: true
 ---
 
 ## 写作方向

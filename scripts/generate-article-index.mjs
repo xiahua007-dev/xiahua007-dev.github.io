@@ -52,8 +52,11 @@ const articles = files
       date: normalizeDateValue(attributes.date),
       status: attributes.status || '阅读全文',
       summary: attributes.summary || '',
+      isDraft: Boolean(attributes.draft),
     }
   })
+  .filter((article) => !article.isDraft)
+  .map(({ isDraft, ...article }) => article)
   .sort((a, b) => {
     const dateDelta = getDateSortValue(b.date) - getDateSortValue(a.date)
 

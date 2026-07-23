@@ -4,6 +4,7 @@ category: "开源学习"
 date: "Soon"
 status: "草稿主题"
 summary: "不从源码细节开始，而是先看项目边界、模块结构、发布方式和工程决策。"
+draft: true
 ---
 
 ## 写作方向

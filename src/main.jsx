@@ -83,7 +83,7 @@ function ProjectList() {
       <SectionHeader
         eyebrow="OPEN SOURCE"
         title="开源项目与关注"
-        description="先展示当前公开仓库和关注方向。后面有更成熟的个人项目时，可以直接在数据文件里替换。"
+        description="记录当前公开仓库、源码阅读和工具研究方向，用真实项目承载长期学习与工程观察。"
       />
       <div className="project-list">
         {projects.map((project, index) => (
@@ -134,7 +134,7 @@ function ThoughtPreview() {
       <SectionHeader
         eyebrow="WRITING"
         title="工作思考与文章"
-        description="文章已经从页面数据升级为 Markdown 文件。完整列表页支持按标题、分类、摘要和正文模糊搜索。"
+        description="整理已经成文的技术判断、项目观察和工作思考，方便按主题持续回看。"
       />
       <div className="thought-grid">
         {previewArticles.map((article) => (
@@ -227,7 +227,7 @@ function WritingListPage() {
           <div>
             <span className="section-label">WRITING</span>
             <h1>工作思考与文章</h1>
-            <p>集中查看所有 Markdown 文章，也可以按标题、分类和摘要模糊搜索。</p>
+            <p>集中查看已经发布的文章，也可以按标题、分类和摘要模糊搜索。</p>
           </div>
           <div className="article-count" aria-label="文章数量">
             <strong>{results.length}</strong>

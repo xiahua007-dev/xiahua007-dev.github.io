@@ -4,6 +4,7 @@ category: "建站记录"
 date: "2026-07"
 status: "计划写作"
 summary: "从 GitHub Pages、域名、HTTPS 到内容结构，记录这个主页从 0 到 1 的搭建过程。"
+draft: true
 ---
 
 ## 写作方向
