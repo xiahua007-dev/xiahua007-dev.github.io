@@ -259,14 +259,25 @@ function getArticleOutline(content) {
   const headings = []
   const headingPattern = /^(#{2,4})\s+(.+)$/gm
   let match
+  let isInCodeBlock = false
 
-  while ((match = headingPattern.exec(content)) !== null) {
+  content.split('\n').forEach((line) => {
+    if (/^```/.test(line.trim())) {
+      isInCodeBlock = !isInCodeBlock
+      return
+    }
+
+    if (isInCodeBlock) return
+
+    match = /^(#{2,4})\s+(.+)$/.exec(line)
+    if (!match) return
+
     headings.push({
-      id: `section-${headings.length + 1}`,
+      id: `article-heading-${headings.length + 1}`,
       level: match[1].length,
       text: cleanHeadingText(match[2]),
     })
-  }
+  })
 
   return headings
 }
@@ -299,7 +310,12 @@ function ArticleOutline({ article, headings }) {
 
   const handleOutlineClick = (event, id) => {
     event.preventDefault()
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    const target = document.getElementById(id)
+
+    if (!target) return
+
+    const top = Math.max(target.getBoundingClientRect().top + window.scrollY - 36, 0)
+    window.scrollTo({ top, behavior: 'smooth' })
   }
 
   const toggleItem = (id) => {
@@ -446,18 +462,21 @@ function ArticlePage({ article }) {
 
   const outline = getArticleOutline(article.content)
   let renderedHeadingIndex = 0
+  const getRenderedHeadingId = (fallbackPrefix) => {
+    const heading = outline[renderedHeadingIndex]
+    renderedHeadingIndex += 1
+
+    return heading?.id || `${fallbackPrefix}-${renderedHeadingIndex}`
+  }
   const markdownComponents = {
     h2({ children }) {
-      renderedHeadingIndex += 1
-      return <h2 id={`section-${renderedHeadingIndex}`}>{children}</h2>
+      return <h2 id={getRenderedHeadingId('article-heading')}>{children}</h2>
     },
     h3({ children }) {
-      renderedHeadingIndex += 1
-      return <h3 id={`section-${renderedHeadingIndex}`}>{children}</h3>
+      return <h3 id={getRenderedHeadingId('article-heading')}>{children}</h3>
     },
     h4({ children }) {
-      renderedHeadingIndex += 1
-      return <h4 id={`section-${renderedHeadingIndex}`}>{children}</h4>
+      return <h4 id={getRenderedHeadingId('article-heading')}>{children}</h4>
     },
     pre({ children }) {
       const child = React.Children.only(children)
