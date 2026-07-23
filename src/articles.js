@@ -1,7 +1,7 @@
 import frontMatter from 'front-matter'
+import { articlesIndex } from './generated/articlesIndex'
 
-const articleModules = import.meta.glob('../content/writing/*.md', {
-  eager: true,
+const articleContentModules = import.meta.glob('../content/writing/*.md', {
   query: '?raw',
   import: 'default',
 })
@@ -10,18 +10,21 @@ function slugFromPath(path) {
   return path.split('/').pop().replace(/\.md$/, '')
 }
 
-export const articles = Object.entries(articleModules)
-  .map(([path, raw]) => {
-    const { attributes, body } = frontMatter(raw)
-
-    return {
-      slug: slugFromPath(path),
-      content: body.trim(),
-      ...attributes,
-    }
-  })
-  .sort((a, b) => String(b.date).localeCompare(String(a.date)))
+export const articles = articlesIndex
 
 export function getArticleBySlug(slug) {
   return articles.find((article) => article.slug === slug)
+}
+
+export async function getArticleContent(slug) {
+  const path = Object.keys(articleContentModules).find((modulePath) => slugFromPath(modulePath) === slug)
+
+  if (!path) {
+    return ''
+  }
+
+  const raw = await articleContentModules[path]()
+  const { body } = frontMatter(raw)
+
+  return body.trim()
 }

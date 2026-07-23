@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import Fuse from 'fuse.js'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { articles, getArticleBySlug } from './articles'
+import { articles, getArticleBySlug, getArticleContent } from './articles'
 import { about, focusAreas, profile, projects } from './siteData'
 import './styles.css'
 
@@ -193,20 +193,31 @@ function ShellNav({ current = 'home' }) {
   )
 }
 
+const ARTICLE_PAGE_SIZE = 12
+
 function WritingListPage() {
   const [query, setQuery] = React.useState('')
+  const [currentPage, setCurrentPage] = React.useState(1)
   const fuse = useMemo(() => new Fuse(articles, {
     keys: [
       { name: 'title', weight: 0.4 },
+      { name: 'summary', weight: 0.3 },
       { name: 'category', weight: 0.2 },
-      { name: 'summary', weight: 0.25 },
-      { name: 'content', weight: 0.15 },
+      { name: 'status', weight: 0.1 },
     ],
     threshold: 0.36,
     ignoreLocation: true,
   }), [])
   const normalizedQuery = query.trim()
   const results = normalizedQuery ? fuse.search(normalizedQuery).map((result) => result.item) : articles
+  const pageCount = Math.max(Math.ceil(results.length / ARTICLE_PAGE_SIZE), 1)
+  const safePage = Math.min(currentPage, pageCount)
+  const pageStart = (safePage - 1) * ARTICLE_PAGE_SIZE
+  const pageArticles = results.slice(pageStart, pageStart + ARTICLE_PAGE_SIZE)
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [normalizedQuery])
 
   return (
     <main className="page-shell writing-shell">
@@ -216,7 +227,7 @@ function WritingListPage() {
           <div>
             <span className="section-label">WRITING</span>
             <h1>工作思考与文章</h1>
-            <p>集中查看所有 Markdown 文章，也可以按标题、分类、摘要和正文模糊搜索。</p>
+            <p>集中查看所有 Markdown 文章，也可以按标题、分类和摘要模糊搜索。</p>
           </div>
           <div className="article-count" aria-label="文章数量">
             <strong>{results.length}</strong>
@@ -230,18 +241,40 @@ function WritingListPage() {
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="输入关键词、分类或正文片段"
+            placeholder="输入关键词、分类或摘要片段"
             autoComplete="off"
           />
         </label>
 
         <div className="article-index-list" aria-live="polite">
           {results.length > 0 ? (
-            results.map((article) => <ArticleCard article={article} variant="row" key={article.slug} />)
+            pageArticles.map((article) => <ArticleCard article={article} variant="row" key={article.slug} />)
           ) : (
             <p className="empty-state">没有找到匹配的文章。</p>
           )}
         </div>
+
+        {results.length > ARTICLE_PAGE_SIZE ? (
+          <nav className="pagination" aria-label="文章分页">
+            <button
+              type="button"
+              onClick={() => setCurrentPage((page) => Math.max(page - 1, 1))}
+              disabled={safePage === 1}
+            >
+              上一页
+            </button>
+            <span>
+              第 {safePage} / {pageCount} 页
+            </span>
+            <button
+              type="button"
+              onClick={() => setCurrentPage((page) => Math.min(page + 1, pageCount))}
+              disabled={safePage === pageCount}
+            >
+              下一页
+            </button>
+          </nav>
+        ) : null}
       </section>
     </main>
   )
@@ -422,6 +455,19 @@ function ArticleOutline({ article, headings }) {
   )
 }
 
+function ArticleFloatingActions() {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  return (
+    <div className="article-floating-actions" aria-label="文章快捷操作">
+      <a href="#writing">回到列表</a>
+      <button type="button" onClick={scrollToTop}>回到顶部</button>
+    </div>
+  )
+}
+
 function MermaidDiagram({ chart }) {
   const [svg, setSvg] = React.useState('')
   const [error, setError] = React.useState('')
@@ -476,6 +522,39 @@ function MermaidDiagram({ chart }) {
 }
 
 function ArticlePage({ article }) {
+  const [contentState, setContentState] = React.useState({ slug: '', body: '', error: '' })
+  const [isLoadingContent, setIsLoadingContent] = React.useState(Boolean(article))
+
+  useEffect(() => {
+    let isMounted = true
+
+    if (!article) {
+      setContentState({ slug: '', body: '', error: '' })
+      setIsLoadingContent(false)
+      return undefined
+    }
+
+    setIsLoadingContent(true)
+
+    getArticleContent(article.slug)
+      .then((nextContent) => {
+        if (!isMounted) return
+        setContentState({ slug: article.slug, body: nextContent, error: '' })
+      })
+      .catch((error) => {
+        if (!isMounted) return
+        setContentState({ slug: article.slug, body: '', error: error.message || '文章加载失败' })
+      })
+      .finally(() => {
+        if (!isMounted) return
+        setIsLoadingContent(false)
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [article])
+
   if (!article) {
     return (
       <main className="page-shell article-shell">
@@ -493,7 +572,11 @@ function ArticlePage({ article }) {
     )
   }
 
-  const outline = getArticleOutline(article.content)
+  const isCurrentContent = contentState.slug === article.slug
+  const content = isCurrentContent ? contentState.body : ''
+  const contentError = isCurrentContent ? contentState.error : ''
+  const isArticleContentLoading = isLoadingContent || !isCurrentContent
+  const outline = getArticleOutline(content)
   const renderedHeadingOccurrences = new Map()
   const getRenderedHeadingId = (children) => {
     const text = cleanHeadingText(childrenToText(children))
@@ -552,9 +635,16 @@ function ArticlePage({ article }) {
           <h1>{article.title}</h1>
           <p className="article-summary">{article.summary}</p>
           <div className="article-content">
-            <ReactMarkdown components={markdownComponents} remarkPlugins={[remarkGfm]}>{article.content}</ReactMarkdown>
+            {isArticleContentLoading ? (
+              <p className="empty-state">文章加载中...</p>
+            ) : contentError ? (
+              <p className="empty-state">{contentError}</p>
+            ) : (
+              <ReactMarkdown components={markdownComponents} remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+            )}
           </div>
         </article>
+        <ArticleFloatingActions />
       </div>
     </main>
   )

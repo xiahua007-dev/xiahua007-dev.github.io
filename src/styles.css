@@ -606,7 +606,7 @@ footer p {
 
 .article-layout {
   display: grid;
-  grid-template-columns: 240px minmax(0, 760px);
+  grid-template-columns: 240px minmax(0, 760px) 88px;
   align-items: start;
   justify-content: center;
   gap: clamp(30px, 4vw, 58px);
@@ -763,6 +763,42 @@ footer p {
   font-size: 0.74rem;
   font-weight: 400;
   color: rgba(107, 90, 74, 0.82);
+}
+
+.article-floating-actions {
+  position: sticky;
+  top: calc(100dvh - 132px);
+  display: grid;
+  gap: 10px;
+  width: 88px;
+  color: var(--color-primary);
+}
+
+.article-floating-actions a,
+.article-floating-actions button {
+  min-height: 44px;
+  padding: 8px 10px;
+  border: 2px solid var(--color-primary);
+  background: rgba(255, 252, 245, 0.78);
+  color: var(--color-primary);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+}
+
+.article-floating-actions a:hover,
+.article-floating-actions a:focus-visible,
+.article-floating-actions button:hover,
+.article-floating-actions button:focus-visible {
+  background: var(--color-primary);
+  color: var(--color-bg);
+  transform: translateY(-2px);
 }
 
 .article-page {
@@ -1292,6 +1328,47 @@ footer {
   gap: 12px;
 }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+  color: var(--color-muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.pagination button {
+  min-height: 40px;
+  border: 1px solid var(--color-primary);
+  border-radius: 0;
+  padding: 8px 14px;
+  background: transparent;
+  color: var(--color-primary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.pagination button:hover,
+.pagination button:focus-visible {
+  background: var(--color-primary);
+  color: var(--color-bg);
+}
+
+.pagination button:disabled {
+  border-color: var(--color-border);
+  color: var(--color-muted);
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.pagination button:disabled:hover,
+.pagination button:disabled:focus-visible {
+  background: transparent;
+  color: var(--color-muted);
+}
+
 .thought-item-row {
   min-height: 184px;
 }
@@ -1336,10 +1413,23 @@ footer {
   }
 
   .article-outline {
+    order: 1;
     position: static;
     max-height: 260px;
     padding: 0 10px 12px 0;
     border-bottom: 1px solid var(--color-border);
+  }
+
+  .article-page {
+    order: 3;
+  }
+
+  .article-floating-actions {
+    order: 2;
+    position: static;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 
   .outline-head {
@@ -1355,6 +1445,14 @@ footer {
     grid-row: auto;
     align-self: start;
     margin-top: auto;
+  }
+
+  .pagination {
+    justify-content: stretch;
+  }
+
+  .pagination button {
+    flex: 1;
   }
 }
 
