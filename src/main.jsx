@@ -336,9 +336,14 @@ function ArticleOutline({ article, headings }) {
   const tree = getOutlineTree(headings)
   const hasCollapsibleItems = headings.some((heading) => heading.level < 4)
 
-  const handleOutlineClick = (event, id) => {
+  const handleOutlineClick = (event, heading) => {
     event.preventDefault()
-    const target = document.getElementById(id)
+    const content = document.querySelector('.article-content')
+    const headingNodes = Array.from(content?.querySelectorAll('h2, h3, h4') || [])
+    const target = headingNodes.find((node) => (
+      node.id === heading.id
+      || (node.tagName.toLowerCase() === `h${heading.level}` && node.textContent.trim() === heading.text)
+    ))
 
     if (!target) return
 
@@ -388,7 +393,7 @@ function ArticleOutline({ article, headings }) {
           ) : (
             <span className="outline-toggle-placeholder" aria-hidden="true" />
           )}
-          <a href={`#${node.id}`} onClick={(event) => handleOutlineClick(event, node.id)}>
+          <a href={`#${node.id}`} onClick={(event) => handleOutlineClick(event, node)}>
             {node.text}
           </a>
         </div>
