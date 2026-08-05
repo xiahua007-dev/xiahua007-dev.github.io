@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-const goatCounterCode = import.meta.env.VITE_GOATCOUNTER_CODE?.trim()
+const goatCounterCode = 'xiahua007'
 
 export default function Analytics() {
   useEffect(() => {
