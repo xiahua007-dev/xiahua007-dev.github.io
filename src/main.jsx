@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import Fuse from 'fuse.js'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import Analytics from './Analytics'
 import { articles, getArticleBySlug, getArticleContent } from './articles'
 import { about, focusAreas, profile, projects } from './siteData'
 import './styles.css'
@@ -762,6 +763,7 @@ function App() {
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+    <Analytics />
     <App />
   </React.StrictMode>,
 )
