@@ -19,4 +19,7 @@ npm run build
 
 ## 访问统计
 
-站点使用免费的 [GoatCounter](https://www.goatcounter.com/) 记录访问量、访问来源、页面和设备等信息，统计后台地址为 `https://xiahua007.goatcounter.com`。
+站点使用免费的 [GoatCounter](https://www.goatcounter.com/) 记录访问情况。
+
+- 统计后台：[https://xiahua007.goatcounter.com](https://xiahua007.goatcounter.com)
+- 可查看数据：访问量、访问来源、访问页面和设备信息
