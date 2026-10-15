@@ -12,6 +12,14 @@ export const focusAreas = ['开源项目', '工程实践', '工作思考']
 
 export const projects = [
   {
+    name: 'TetherKit',
+    type: '开源改进',
+    language: 'C++ / Swift',
+    description: '基于上游 Android USB 网络共享工具，改进 macOS 下的自动配网与连接授权，增加每日流量统计，并优化后台资源占用。',
+    url: 'https://github.com/xiahua007-dev/TetherKit',
+    status: 'Active',
+  },
+  {
     name: 'xiahua007-dev.github.io',
     type: '个人主页',
     language: 'React / Vite / CSS',
