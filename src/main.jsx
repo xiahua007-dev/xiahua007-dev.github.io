@@ -755,6 +755,7 @@ function App() {
 
       <footer>
         <p>Built with React + Vite</p>
+        <p><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">冀ICP备2021009063号-1</a></p>
         <p>© 2026 {profile.name}</p>
       </footer>
     </main>
